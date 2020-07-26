@@ -3,9 +3,8 @@ import MaterialTable from "material-table";
 import axios from "axios";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { FormGroup } from "@material-ui/core";
-
-import "./addModel.css";
-import addModal from "./addModel";
+import { Link, Redirect } from "react-router-dom";
+import UpdatedModal from "./modalUpdate";
 
 export default class Tableview extends Component {
   /*
@@ -27,6 +26,7 @@ export default class Tableview extends Component {
     this.state = {
       data: [],
       mostrar: false,
+      id: null,
     };
   }
 
@@ -63,18 +63,20 @@ export default class Tableview extends Component {
       icon: "edit",
       tooltip: "Editar",
       onClick: async (event, rowData) => {
-        //if (window.confirm("Tu deseas editar " + rowData.title)) {
-        try {
-          this.showModal();
-          console.log(this.state.mostrar);
+        if (window.confirm("Tu deseas editar " + rowData.title)) {
+          try {
+            this.state.data.forEach((element) => {
+              this.setState({
+                mostrar: true,
+                id: rowData.id,
+              });
+            });
 
-          console.log("Listo");
-        } catch (e) {
-          console.log(e);
+            console.log("Listo");
+          } catch (e) {
+            console.log(e);
+          }
         }
-        //} else {
-        //console.log("salio");
-        //}
       },
     },
     (rowData) => ({
@@ -101,16 +103,17 @@ export default class Tableview extends Component {
   render() {
     return (
       <div>
+        {this.state.mostrar ? (
+          <UpdatedModal id={this.state.id}></UpdatedModal>
+        ) : (
+          ""
+        )}
         <MaterialTable
           title="Biblioteca"
           data={this.state.data}
           columns={this.columns}
           actions={this.actions}
         />
-        <addModel
-          mostrar={this.state.mostrar}
-          handleClose={this.hideModal}
-        ></addModel>
       </div>
     );
   }
